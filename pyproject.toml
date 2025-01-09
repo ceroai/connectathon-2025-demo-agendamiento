@@ -1,7 +1,7 @@
 [project]
-name = "demo-connectathon"
+name = "demo-agendamiento"
 version = "0.1.0"
-description = "Add your description here"
+description = "Demo de agendamiento de citas"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
