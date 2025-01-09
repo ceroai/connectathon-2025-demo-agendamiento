@@ -1,0 +1,204 @@
+{
+    "resourceType": "Bundle",
+    "id": "BundSol",
+    "meta": {
+        "profile": [
+            "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/BundleSolicitud"
+        ]
+    },
+    "identifier": {
+        "value": "BundSol"
+    },
+    "type": "transaction",
+    "timestamp": "2024-07-26T14:15:00-03:00",
+    "entry": [
+        {
+            "fullUrl": "https://gateway.onfhir.cl/hl7cl/fhir/{patientId}",
+            "resource": {
+                "resourceType": "Patient",
+                "id": "PacienteGrupo12",
+                "meta": {
+                    "profile": [
+                        "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/PacienteAgenda"
+                    ]
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p class=\"res-header-id\"><b>Generated Narrative: Patient EjemploPaciente1</b></p><a name=\"EjemploPaciente1\"> </a><a name=\"hcEjemploPaciente1\"> </a><a name=\"EjemploPaciente1-es-CL\"> </a><p style=\"border: 1px #661aff solid; background-color: #e6e6ff; padding: 10px;\">Valentina Daniela Contreras  (no stated gender), DoB: 2001-02-10 ( 20.706.399-1)</p><hr/><table class=\"grid\"><tr><td style=\"background-color: #f3f5da\" title=\"Da la edad del paciente\"><a href=\"StructureDefinition-Edad.html\">Edad del paciente</a></td><td colspan=\"3\">23</td></tr></table></div>"
+                },
+                "identifier": [
+                    {
+                        "value": "99.999.999-9"
+                    }
+                ],
+                "name": [
+                    {
+                        "family": "Organa de la Vega",
+                        "given": [
+                            "Mohana",
+                            "Leia"
+                        ]
+                    }
+                ],
+                "birthDate": "1982-11-07"
+            },
+            "request": {
+                "method": "PUT",
+                "url": "{patientId}"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:8a7b4900-3861-4849-b36f-ad1ec3c46a2f",
+            "resource": {
+                "resourceType": "ServiceRequest",
+                "id": "EjemploSolicitudServicio1",
+                "meta": {
+                    "profile": [
+                        "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/SolicitudServicio"
+                    ]
+                },
+                "status": "active",
+                "intent": "directive",
+                "priority": "routine",
+                "subject": {
+                    "reference": "{patientId}"
+                },
+                "authoredOn": "2024-12-03T17:00:00-03:00",
+                "reasonReference": [
+                    {
+                        "reference": "urn:uuid:8a7b4901-3862-4649-b66f-ac1eb3c4aa2f"
+                    },
+                    {
+                        "reference": "urn:uuid:8a7b4901-3862-4649-b66f-ac1ec3a4aa2f"
+                    }
+                ]
+            },
+            "request": {
+                "method": "POST",
+                "url": "ServiceRequest/"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:8a7b4901-3862-4649-b66f-ac1ec3c4aa2f",
+            "resource": {
+                "resourceType": "Coverage",
+                "id": "EjemploPrevison",
+                "meta": {
+                    "profile": [
+                        "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/Prevision"
+                    ]
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p class=\"res-header-id\"><b>Generated Narrative: Coverage EjemploPrevison</b></p><a name=\"EjemploPrevison\"> </a><a name=\"hcEjemploPrevison\"> </a><a name=\"EjemploPrevison-es-CL\"> </a><p><b>status</b>: Active</p><p><b>type</b>: <span title=\"Codes:{https://interoperabilidad.minsal.cl/fhir/ig/agenda/CodeSystem/CSPrevision 01}\">FONASA</span></p><p><b>beneficiary</b>: <a href=\"Patient-EjemploPaciente1.html\">Valentina Daniela Contreras  (no stated gender), DoB: 2001-02-10 ( 20.706.399-1)</a></p><p><b>payor</b>: Tramo B</p></div>"
+                },
+                "status": "active",
+                "type": {
+                    "coding": [
+                        {
+                            "system": "https://interoperabilidad.minsal.cl/fhir/ig/agenda/CodeSystem/CSPrevision",
+                            "code": "01",
+                            "display": "FONASA"
+                        }
+                    ]
+                },
+                "beneficiary": {
+                    "reference": "{patientId}"
+                },
+                "payor": [
+                    {
+                        "display": "Tramo B"
+                    }
+                ]
+            },
+            "request": {
+                "method": "POST",
+                "url": "Coverage/"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:8a7b4901-3862-4649-b66f-ac1ec3a4aa2f",
+            "resource": {
+                "resourceType": "Condition",
+                "meta": {
+                    "profile": [
+                        "https://hl7chile.cl/fhir/ig/clcore/StructureDefinition/CoreDiagnosticoCl"
+                    ]
+                },
+                "clinicalStatus": {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                            "code": "active",
+                            "display": "Active"
+                        }
+                    ],
+                    "text": "Activo"
+                },
+                "verificationStatus": {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                            "code": "confirmed",
+                            "display": "Confirmed"
+                        }
+                    ],
+                    "text": "Confirmado"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://snomed.info/sct",
+                            "code": "394802001",
+                            "display": "Diabetic retinopathy"
+                        }
+                    ],
+                    "text": "Diagnóstico de diabetes retinopática"
+                },
+                "subject": {
+                    "reference": "{patientId}"
+                },
+                "onsetDateTime": "2017-08-07T00:00:00-04:00"
+            },
+            "request": {
+                "method": "POST",
+                "url": "Condition/"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:8a7b4901-3862-4649-b66f-ac1eb3c4aa2f",
+            "resource": {
+                "resourceType": "Observation",
+                "meta": {
+                    "profile": [
+                        "https://hl7chile.cl/fhir/ig/clcore/StructureDefinition/CoreObservacionCL"
+                    ]
+                },
+                "status": "registered",
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "10210-3",
+                            "display": "Narrativa General de problema físico"
+                        }
+                    ],
+                    "text": "Narrativa General de problema físico"
+                },
+                "note": [
+                    {
+                        "text": "Dolor estomacal agudo"
+                    }
+                ],
+                "subject": {
+                    "reference": "{patientId}"
+                },
+                "effectiveDateTime": "2024-11-23T17:00:00-03:00"
+            },
+            "request": {
+                "method": "POST",
+                "url": "Observation/"
+            }
+        }
+    ]
+}
