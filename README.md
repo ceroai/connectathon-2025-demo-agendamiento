@@ -14,9 +14,7 @@ Este proyecto implementa un servicio de gestión de citas médicas que se integr
 
 ## Instalación
 
-1. Clona el repositorio
-
-2. Instala las dependencias utilizando uv:
+Instala las dependencias utilizando uv:
 
 ```bash
 uv venv
@@ -24,10 +22,13 @@ source .venv/bin/activate
 uv pip install .
 ```
 
-3. Configura las variables de entorno:
-   - Copia el archivo `src/.env.example` a `src/.env`
-   - Ajusta las variables según tu entorno
+Configura las variables de entorno:
+- Copia el archivo `src/.env.example` a `src/.env`
+- Ajusta las variables según tu entorno
 
+Configura una cuenta de whatsapp en Twilio, y en el .env pon las credenciales correspondientes.
+
+Si ejecutas el servidor localmente, deberás exponer el puerto 8000 a internet (por ej., con ngrok), y configurar el webhook de Twilio para que apunte a tu servidor.
 
 ## Uso
 
