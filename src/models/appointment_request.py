@@ -1,3 +1,5 @@
+"""Modelo que representa el payload de la solicitud de cita."""
+
 from __future__ import annotations
 
 from typing import List, Optional

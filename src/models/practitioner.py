@@ -1,3 +1,5 @@
+"""Modelo que representa el resultado de busqueda de Practitioners."""
+
 from __future__ import annotations
 
 from typing import List
