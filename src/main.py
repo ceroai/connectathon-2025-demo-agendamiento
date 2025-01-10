@@ -70,14 +70,16 @@ def cleanup_old_conversations():
             del appointments[number]
 
 def _generate_appointment_message(appointment_datetime: str, practitioner_name: str) -> str:
-    return f"""Te asignamos la siguiente cita:\n 
+    return f"""Te asignamos la siguiente cita:
 
-    🗓 Fecha y hora: *{appointment_datetime}*
-    🥼 Profesional:{practitioner_name}
-    🏥 Sucursal: El Centro
-    📍 Ubicación: Dirección 1234, Puerto Montt
+🗓 Fecha y hora: *{appointment_datetime}*
+🥼 Profesional: {practitioner_name}
+🏥 Sucursal: El Consultorio
+📍 Ubicación: Av. Los Montt 2301, Puerto Montt
 
-    Por favor confirma tu asistencia respondiendo a este mensaje. ¡Nos vemos pronto! 🏥👩‍⚕️"""
+Por favor confirma tu asistencia respondiendo a este mensaje. 
+
+¡Nos vemos pronto! 🏥👩‍⚕️"""
 
 async def get_ai_response(message: str, conversation_history: List[dict]) -> str:
     try:
