@@ -32,11 +32,33 @@ def formatear_fecha_legible(fecha_str: str) -> str:
     return f"El {dia_semana} {dia} de {mes} de {año} a las {hora} horas"
 
 
+def find_appointment_id(appointment: Appointment) -> str:
+    for entry in appointment.entry:
+        if entry.resource.id:
+            return entry.resource.id
+    return None
+
+
 def find_practitioner_id(appointment: Appointment) -> str:
     for entry in appointment.entry:
         for participant in entry.resource.participant:
             if participant.actor.reference.startswith("Practitioner/"):
                 return participant.actor.reference.split("/")[1]
+    return None
+
+
+def find_service_request_id(appointment: Appointment) -> str:
+    for entry in appointment.entry:
+        for based_on in entry.resource.basedOn:
+            if based_on.reference.startswith("ServiceRequest/"):
+                return based_on.reference.split("/")[1]
+    return None
+
+
+def find_patient_id(appointment: Appointment) -> str:
+    for entry in appointment.entry:
+        if entry.resource.actor.reference.startswith("Patient/"):
+            return entry.resource.actor.reference.split("/")[1]
     return None
 
 

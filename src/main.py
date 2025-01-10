@@ -4,8 +4,21 @@ from openai import OpenAI
 import uvicorn
 from datetime import datetime, timedelta
 from typing import Dict, List
-from fhir_apis.fhir import solicitar_cita, obtener_ultima_cita, get_practitioner
-from utils import formatear_fecha_legible, get_practitioner_name, find_practitioner_id
+from fhir_apis.fhir import (
+    solicitar_cita,
+    obtener_ultima_cita,
+    get_practitioner,
+    aceptar_cita,
+    rechazar_cita,
+)
+from utils import (
+    formatear_fecha_legible,
+    get_practitioner_name,
+    find_practitioner_id,
+    find_service_request_id,
+    find_patient_id,
+    find_appointment_id,
+)
 import requests
 import asyncio
 from settings import settings
@@ -125,9 +138,27 @@ async def webhook(request: Request):
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
                     )
             case "ACEPTADO":
-                resp.message(ai_response)
+                cita = obtener_ultima_cita()
+
+                aceptar_cita(
+                    appointment_id=find_appointment_id(cita),
+                    patient_id=find_patient_id(cita),
+                    service_request_id=find_service_request_id(cita),
+                    practitioner_id=find_practitioner_id(cita),
+                )
+
+                resp.message("Gracias por su respuesta, te esperamos!")
             case "RECHAZADO":
-                resp.message(ai_response)
+                cita = obtener_ultima_cita()
+                rechazar_cita(
+                    appointment_id=find_appointment_id(cita),
+                    patient_id=find_patient_id(cita),
+                    service_request_id=find_service_request_id(cita),
+                    practitioner_id=find_practitioner_id(cita),
+                )
+
+                resp.message("Rechazaste la cita.")
+
             case "REASIGNAR":
                 resp.message(ai_response)
             case str() if ai_response.startswith("REASIGNAR "):
