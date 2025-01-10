@@ -15,8 +15,10 @@ from fhir_apis.fhir import (
     obtener_ultima_cita,
     rechazar_cita,
     solicitar_cita,
+    obtener_cita_por_service_request_id,
 )
 from models.appointment_create_request import PostAppointmentRequest
+from models.appointment import Appointment
 from settings import settings
 from utils import (
     find_appointment_id,
@@ -37,6 +39,8 @@ conversations: Dict[str, List[dict]] = {}
 
 # Store appointments: phone_number -> appointment
 appointments: Dict[str, dict] = {}
+
+PATIENT_ID = "Patient/781"
 
 system_prompt = f"""
     Eres un asistente del consultorio familiar llamado "El Consultorio", ubicado en Av. Los Montt 2301 en Puerto Montt, región de Los Lagos, cuyas horas de funcionamiento son desde las 8:00 hasta las 17 hrs. Los consultorios también se conocen como CESFAM, o Centro de Salud Familiar. 
@@ -142,15 +146,16 @@ async def webhook(request: Request):
 
         match ai_response:
             case "AGENDAR":
-                response = solicitar_cita("Patient/781")
+                response = solicitar_cita(PATIENT_ID)
                 if response.ok:
                     resp.message(
                         "Estamos pidiendo la cita, te avisaremos cuando esté agendada"
                     )
                     # Store the appointment request
-                    appointments[sender] = {"status": "pending"}
-                    # Schedule the follow-up message
-                    asyncio.create_task(send_appointment_date(sender))
+                    appointments[sender] = {
+                        "patient_id": PATIENT_ID,
+                        "status": "pending"
+                    }
                 else:
                     resp.message(
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
@@ -199,21 +204,38 @@ async def webhook(request: Request):
 
 @app.post("/appointment")
 async def create_appointment(body: PostAppointmentRequest):
-    crear_cita(body)
+    response = crear_cita(body)
+    patient_id = find_patient_id(Appointment(response.json()))
+
+    for sender, data in appointments.items():
+        if data["patient_id"] == patient_id:
+            # TODO
+            appointments[sender]["appointment"] = response.json()
+            appointments[sender]["status"] = "confirmed"
+            break
+    else:
+        return Response(status_code=404, content="Patient not found")
+    asyncio.create_task(send_appointment_date(sender))
+
+    return response.json()
 
 
 async def send_appointment_date(sender: str):
     await asyncio.sleep(settings.WAIT_TIME_FOR_APPOINTMENT_SECONDS)
 
     try:
-        # Get the appointment date
-        cita = obtener_ultima_cita()
+        # Get the appointment
+        service_request_id = appointments[sender]["appointment"]["basedOn"][0]["reference"].split("/")[1]
+        cita = obtener_cita_por_service_request_id(service_request_id)
+
+        patient_id = find_patient_id(cita)
         practitioner_id = find_practitioner_id(cita)
         practitioner = get_practitioner(practitioner_id)
         fecha_cita = formatear_fecha_legible(cita.entry[0].resource.start)
         nombre_practitioner = get_practitioner_name(practitioner)
         # Store the confirmed appointment
         appointments[sender] = {
+            "patient_id": patient_id,
             "status": "confirmed",
             "appointment": cita.entry[0].resource,
             "formatted_date": fecha_cita,

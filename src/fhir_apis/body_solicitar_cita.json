@@ -10,7 +10,7 @@
         "value": "BundSol"
     },
     "type": "transaction",
-    "timestamp": "2024-07-26T14:15:00-03:00",
+    "timestamp": "2025-01-10T13:00:00-03:00",
     "entry": [
         {
             "fullUrl": "https://gateway.onfhir.cl/hl7cl/fhir/{patientId}",

@@ -1,7 +1,7 @@
 import json
 import uuid
 import requests
-
+import datetime
 from models.appointment import Appointment
 from models.appointment_create_request import PostAppointmentRequest
 from models.practitioner import Practitioner
@@ -15,6 +15,7 @@ with open("fhir_apis/body_solicitar_cita.json", "r") as file:
 
 def get_solicitar_cita_body(json_content: dict, patient_id: str) -> dict:
     content = json_content
+    content["timestamp"] = datetime.datetime.now(datetime.UTC).isoformat()
 
     # Reemplazar todas las ocurrencias de {patientId}
     for entry in content["entry"]:
@@ -60,6 +61,20 @@ def solicitar_cita(patient_id: str) -> requests.Response:
 
 def obtener_ultima_cita(patient_rut: str = "99.999.999-9") -> Appointment:
     params = {"status": "booked", "patient.identifier": patient_rut}
+
+    access_token = get_access_token(
+        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
+    )
+    response = requests.get(
+        f"{settings.FHIR_API_URL}/Appointment",
+        headers={"Authorization": f"Bearer {access_token}"},
+        params=params,
+    )
+    return Appointment(**response.json())
+
+
+def obtener_cita_por_service_request_id(service_request_id: str) -> Appointment:
+    params = {"based-on": service_request_id, "status": "booked"}
 
     access_token = get_access_token(
         settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
@@ -200,7 +215,7 @@ def get_crear_cita_body(body_crear_cita: dict, request: PostAppointmentRequest) 
     return body_crear_cita
 
 
-def crear_cita(request: PostAppointmentRequest):
+def crear_cita(request: PostAppointmentRequest) -> requests.Response:
     access_token = get_access_token(
         settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
     )
