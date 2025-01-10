@@ -4,8 +4,8 @@ from openai import OpenAI
 import uvicorn
 from datetime import datetime, timedelta
 from typing import Dict, List
-from fhir_apis.fhir import solicitar_cita, obtener_ultima_cita
-from utils import formatear_fecha_legible
+from fhir_apis.fhir import solicitar_cita, obtener_ultima_cita, get_practitioner
+from utils import formatear_fecha_legible, get_practitioner_name, find_practitioner_id
 import requests
 import asyncio
 from settings import settings
@@ -150,13 +150,16 @@ async def send_appointment_date(sender: str):
     try:
         # Get the appointment date
         cita = obtener_ultima_cita()
+        practitioner_id = find_practitioner_id(cita)
+        practitioner = get_practitioner(practitioner_id)
         fecha_cita = formatear_fecha_legible(cita.entry[0].resource.start)
-
+        nombre_practitioner = get_practitioner_name(practitioner)
         # Store the confirmed appointment
         appointments[sender] = {
             "status": "confirmed",
             "appointment": cita.entry[0].resource,
             "formatted_date": fecha_cita,
+            "practitioner_name": nombre_practitioner,
         }
 
         # Create and send the follow-up message via Twilio
@@ -168,7 +171,7 @@ async def send_appointment_date(sender: str):
         data = {
             "To": sender,
             "From": from_number,
-            "Body": f"Tu cita ha sido agendada para: {fecha_cita}\n\nTe esperamos!",
+            "Body": f"Tu cita ha sido agendada con {nombre_practitioner} para: {fecha_cita}\n\nTe esperamos!",
         }
 
         auth = (account_sid, auth_token)

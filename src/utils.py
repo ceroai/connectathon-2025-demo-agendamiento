@@ -1,5 +1,9 @@
 from datetime import datetime
+
 import locale
+
+from models.appointment import Appointment
+from models.practitioner import Practitioner
 
 
 def formatear_fecha_legible(fecha_str: str) -> str:
@@ -26,3 +30,15 @@ def formatear_fecha_legible(fecha_str: str) -> str:
     hora = fecha.strftime("%H:%M")
 
     return f"El {dia_semana} {dia} de {mes} de {año} a las {hora} horas"
+
+
+def find_practitioner_id(appointment: Appointment) -> str:
+    for entry in appointment.entry:
+        for participant in entry.resource.participant:
+            if participant.actor.reference.startswith("Practitioner/"):
+                return participant.actor.reference.split("/")[1]
+    return None
+
+
+def get_practitioner_name(practitioner: Practitioner) -> str:
+    return f"{practitioner.name[0].given[0]} {practitioner.name[0].family}"
