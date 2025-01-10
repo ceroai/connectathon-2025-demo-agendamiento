@@ -12,6 +12,7 @@ from fhir_apis.fhir import (
     aceptar_cita,
     crear_cita,
     get_practitioner,
+    obtener_solicitudes,
     obtener_ultima_cita,
     rechazar_cita,
     solicitar_cita,
@@ -196,8 +197,13 @@ async def webhook(request: Request):
 
 
 @app.post("/appointment")
-async def create_appointment(body: PostAppointmentRequest):
+async def create_appointment(body: PostAppointmentRequest) -> None:
     crear_cita(body)
+
+
+@app.get("/service_requests")
+async def get_service_requests(patient_id: str | None) -> list[dict]:
+    return obtener_solicitudes(patient_id)
 
 
 async def send_appointment_date(sender: str):

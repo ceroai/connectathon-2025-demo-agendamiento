@@ -329,3 +329,16 @@ def get_practitioner(practitioner_id: str) -> Practitioner:
         headers={"Authorization": f"Bearer {access_token}"},
     )
     return Practitioner(**response.json())
+
+
+def obtener_solicitudes(patient_id: str | None) -> list[dict]:
+    access_token = get_access_token(
+        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
+    )
+    params = {"subject": patient_id} if patient_id else None
+    response = requests.get(
+        f"{settings.FHIR_API_URL}/ServiceRequest",
+        params=params,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    return response.json()["entry"]
