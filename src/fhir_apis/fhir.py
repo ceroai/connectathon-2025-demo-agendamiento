@@ -1,6 +1,10 @@
 import json
+
 import requests
+
+from models.accept_appointment import AcceptAppointment
 from models.appointment import Appointment
+from models.practitioner import Practitioner
 from settings import settings
 
 
@@ -83,3 +87,25 @@ def obtener_ultima_cita(patient_rut: str = "99.999.999-9") -> Appointment:
         params=params,
     )
     return Appointment(**response.json())
+
+
+def get_practitioner(practitioner_id: str) -> Practitioner:
+    access_token = get_access_token(
+        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
+    )
+    response = requests.get(
+        f"{settings.FHIR_API_URL}/Practitioner/{practitioner_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    return Practitioner(**response.json())
+
+
+def accept_appointment(accept_appointment_body: AcceptAppointment) -> requests.Response:
+    access_token = get_access_token(
+        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
+    )
+    return requests.post(
+        f"{settings.FHIR_API_URL}/",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json=accept_appointment_body.model_dump(),
+    )
