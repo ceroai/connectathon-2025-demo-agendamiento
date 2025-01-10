@@ -2,21 +2,26 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
 
 
 class Meta(BaseModel):
-    profile: List[str]
+    profile: List[str] = [
+        "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/BundleRespuesta"
+    ]
 
 
 class Identifier(BaseModel):
-    value: str
+    value: str = "BundResp"
 
 
 class Meta1(BaseModel):
-    profile: List[str]
+    profile: List[str] = [
+        "https://interoperabilidad.minsal.cl/fhir/ig/agenda/StructureDefinition/CitaRespuesta"
+    ]
 
 
 class Appointment(BaseModel):
@@ -78,7 +83,7 @@ class Resource(BaseModel):
 
 
 class Request(BaseModel):
-    method: str
+    method: str = "PUT"
     url: str
 
 
@@ -88,11 +93,11 @@ class EntryItem(BaseModel):
     request: Request
 
 
-class AcceptAppointment(BaseModel):
-    resourceType: str
-    id: str
+class AcceptRejectAppointment(BaseModel):
+    resourceType: str = "Bundle"
+    id: str = "BundResp"
     meta: Meta
     identifier: Identifier
-    type: str
-    timestamp: str
+    type: str = "transaction"
+    timestamp: str = datetime.now().isoformat()
     entry: List[EntryItem]

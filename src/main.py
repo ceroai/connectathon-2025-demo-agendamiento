@@ -124,6 +124,10 @@ async def webhook(request: Request):
                     resp.message(
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
                     )
+            case "ACEPTADO":
+                resp.message(ai_response)
+            case "RECHAZADO":
+                resp.message(ai_response)
             case "REASIGNAR":
                 resp.message(ai_response)
             case str() if ai_response.startswith("REASIGNAR "):
