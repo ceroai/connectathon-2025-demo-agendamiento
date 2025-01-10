@@ -41,7 +41,8 @@ conversations: Dict[str, List[dict]] = {}
 # Store appointments: phone_number -> appointment
 appointments: Dict[str, dict] = {}
 
-PATIENT_ID = "Patient/781"
+# PATIENT_ID = "Patient/781"
+PATIENT_ID = "Patient/888"
 
 system_prompt = f"""
     Eres un asistente del consultorio familiar llamado "El Consultorio", ubicado en Av. Los Montt 2301 en Puerto Montt, región de Los Lagos, cuyas horas de funcionamiento son desde las 8:00 hasta las 17 hrs. Los consultorios también se conocen como CESFAM, o Centro de Salud Familiar. 
@@ -224,7 +225,6 @@ async def webhook(request: Request):
 @app.post("/appointment")
 async def create_appointment(body: PostAppointmentRequest):
     response = crear_cita(body)
-    print(response.json())
 
     appointment_id = response.json()["id"]
 

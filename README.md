@@ -38,3 +38,7 @@ python src/main.py
 ```
 
 Luego puedes escribir al whatsapp que tienes configurado en el archivo `.env` y te asignará una cita.
+
+## Servidor FHIR
+
+Si no tienes un servidor FHIR, puedes levantar uno localmente con docker. Por ejemplo, `hapiproject/hapi` y usar la url base en los settings del proyecto. 
