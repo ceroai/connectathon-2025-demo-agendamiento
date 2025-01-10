@@ -12,7 +12,6 @@ from fhir_apis.fhir import (
     aceptar_cita,
     crear_cita,
     get_practitioner,
-    obtener_ultima_cita,
     rechazar_cita,
     solicitar_cita,
     get_appointment_by_id,
@@ -47,7 +46,7 @@ system_prompt = f"""
     
     Tu labor es ayudar a pacientes a pedir citas con el doctor. Los pacientes no pueden agendar cuando quieran, sino que deben solicitar una cita, y el CESFAM se encarga de asignar una cita a los pacientes. En este contexto, las citas también se les llama "horas", por ejemplo, cuando el paciente dice "quiero agendar una hora", la "hora" es una cita médica.
     
-    Cuando el paciente escriba algo con la intención de agendar una cita, responde con la palabra 'AGENDAR'. No digas nada más. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
+    Cuando el paciente escriba algo con la intención de agendar una cita, junto con sus síntomas, responde con "AGENDAR" más los síntomas que el paciente indique. Si el paciente no indica síntomas, pregúntale por ellos. Sólo cuando el paciente haya indicado los síntomas, debes responder con "AGENDAR" más los síntomas. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
 
     Sólo después de haber dicho 'AGENDAR', el paciente puede aceptar o rechazar la cita. Aceptar la cita significa que el paciente confirma que asistirá a la cita asignada. Rechazar la cita significa que el paciente no puede asistir a la cita asignada. Cuando ocurra la aceptación o rechazo, debes responder "ACEPTADO" o "RECHAZADO" respectivamente, sin decir nada más. Si el paciente rechaza la cita, además puede indicar en su mensaje que le gustaría cambiar la fecha (por ejemplo, "no puedo asistir, es posible ir la próxima semana?"). En ese caso, debes responder "REASIGNAR" seguido de la fecha que eligió, por ejemplo: "REASIGNAR 2025-01-01".
     
@@ -145,8 +144,19 @@ async def webhook(request: Request):
             conversations[sender] = conversations[sender][-10:]
 
         match ai_response:
-            case "AGENDAR":
-                response = solicitar_cita(PATIENT_ID)
+            # case "AGENDAR":
+            #     resp.message(
+            #         "Por favor, indica los síntomas de la consulta"
+            #     )
+            #     # Store the appointment request
+            #     appointments[sender] = {
+            #         "patient_id": PATIENT_ID,
+            #         "status": "pending",
+            #         "observation": "",
+            #     }
+            case str() if ai_response.startswith("AGENDAR "):
+                observation = ai_response.split(" ", 1)[1]
+                response = solicitar_cita(PATIENT_ID, observation)
                 if response.ok:
                     resp.message(
                         "Estamos pidiendo la cita, te avisaremos cuando esté agendada"
@@ -154,7 +164,8 @@ async def webhook(request: Request):
                     # Store the appointment request
                     appointments[sender] = {
                         "patient_id": PATIENT_ID,
-                        "status": "pending"
+                        "status": "pending",
+                        "observation": observation,
                     }
                 else:
                     resp.message(
