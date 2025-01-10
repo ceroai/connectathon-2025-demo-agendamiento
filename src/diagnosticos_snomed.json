@@ -1,0 +1,572 @@
+[
+    {
+        "code": "109006",
+        "system": "http://snomed.info/sct",
+        "display": "Anxiety disorder of childhood OR adolescence",
+        "spanish_display": "Trastorno de ansiedad de la infancia o adolescencia"
+    },
+    {
+        "code": "122003",
+        "system": "http://snomed.info/sct",
+        "display": "Choroidal hemorrhage",
+        "spanish_display": "Hemorragia coroidea"
+    },
+    {
+        "code": "127009",
+        "system": "http://snomed.info/sct",
+        "display": "Spontaneous abortion with laceration of cervix",
+        "spanish_display": "Aborto espontáneo con laceración del cuello uterino"
+    },
+    {
+        "code": "129007",
+        "system": "http://snomed.info/sct",
+        "display": "Homoiothermia",
+        "spanish_display": "Homoiotermia"
+    },
+    {
+        "code": "134006",
+        "system": "http://snomed.info/sct",
+        "display": "Decreased hair growth",
+        "spanish_display": "Disminución del crecimiento del cabello"
+    },
+    {
+        "code": "140004",
+        "system": "http://snomed.info/sct",
+        "display": "Chronic pharyngitis",
+        "spanish_display": "Faringitis crónica"
+    },
+    {
+        "code": "144008",
+        "system": "http://snomed.info/sct",
+        "display": "Normal peripheral vision",
+        "spanish_display": "Visión periférica normal"
+    },
+    {
+        "code": "150003",
+        "system": "http://snomed.info/sct",
+        "display": "Abnormal bladder continence",
+        "spanish_display": "Continencia vesical anormal"
+    },
+    {
+        "code": "151004",
+        "system": "http://snomed.info/sct",
+        "display": "Gonococcal meningitis",
+        "spanish_display": "Meningitis gonocócica"
+    },
+    {
+        "code": "162004",
+        "system": "http://snomed.info/sct",
+        "display": "Severe manic bipolar I disorder without psychotic features",
+        "spanish_display": "Trastorno bipolar I maníaco severo sin características psicóticas"
+    },
+    {
+        "code": "165002",
+        "system": "http://snomed.info/sct",
+        "display": "Accident-prone",
+        "spanish_display": "Propenso a accidentes"
+    },
+    {
+        "code": "168000",
+        "system": "http://snomed.info/sct",
+        "display": "Typhlolithiasis",
+        "spanish_display": "Tiflolitiasis"
+    },
+    {
+        "code": "171008",
+        "system": "http://snomed.info/sct",
+        "display": "Injury of ascending right colon without open wound into abdominal cavity",
+        "spanish_display": "Lesión del colon ascendente derecho sin herida abierta en la cavidad abdominal"
+    },
+    {
+        "code": "175004",
+        "system": "http://snomed.info/sct",
+        "display": "Supraorbital neuralgia",
+        "spanish_display": "Neuralgia supraorbitaria"
+    },
+    {
+        "code": "177007",
+        "system": "http://snomed.info/sct",
+        "display": "Poisoning by sawfly larvae",
+        "spanish_display": "Envenenamiento por larvas de mosca sierra"
+    },
+    {
+        "code": "179005",
+        "system": "http://snomed.info/sct",
+        "display": "Apraxia of dressing",
+        "spanish_display": "Apraxia del vestirse"
+    },
+    {
+        "code": "181007",
+        "system": "http://snomed.info/sct",
+        "display": "Hemorrhagic bronchopneumonia",
+        "spanish_display": "Bronconeumonía hemorrágica"
+    },
+    {
+        "code": "183005",
+        "system": "http://snomed.info/sct",
+        "display": "Autoimmune pancytopenia",
+        "spanish_display": "Pancitopenia autoinmune"
+    },
+    {
+        "code": "184004",
+        "system": "http://snomed.info/sct",
+        "display": "Withdrawal arrhythmia",
+        "spanish_display": "Arritmia por abstinencia"
+    },
+    {
+        "code": "188001",
+        "system": "http://snomed.info/sct",
+        "display": "Injury of intercostal artery",
+        "spanish_display": "Lesión de la arteria intercostal"
+    },
+    {
+        "code": "192008",
+        "system": "http://snomed.info/sct",
+        "display": "Congenital syphilitic hepatomegaly",
+        "spanish_display": "Hepatomegalia sifilítica congénita"
+    },
+    {
+        "code": "193003",
+        "system": "http://snomed.info/sct",
+        "display": "Benign hypertensive renal disease",
+        "spanish_display": "Enfermedad renal hipertensiva benigna"
+    },
+    {
+        "code": "198007",
+        "system": "http://snomed.info/sct",
+        "display": "Disease caused by Filoviridae (disorder)",
+        "spanish_display": "Enfermedad causada por Filoviridae (trastorno)"
+    },
+    {
+        "code": "199004",
+        "system": "http://snomed.info/sct",
+        "display": "Decreased lactation",
+        "spanish_display": "Disminución de la lactancia"
+    },
+    {
+        "code": "216004",
+        "system": "http://snomed.info/sct",
+        "display": "Delusion of persecution",
+        "spanish_display": "Delirio de persecución"
+    },
+    {
+        "code": "219006",
+        "system": "http://snomed.info/sct",
+        "display": "Alcohol user",
+        "spanish_display": "Consumidor de alcohol"
+    },
+    {
+        "code": "222008",
+        "system": "http://snomed.info/sct",
+        "display": "Acute epiglottitis with obstruction",
+        "spanish_display": "Epiglotitis aguda con obstrucción"
+    },
+    {
+        "code": "223003",
+        "system": "http://snomed.info/sct",
+        "display": "Tumor of body of uterus affecting pregnancy",
+        "spanish_display": "Tumor del cuerpo del útero que afecta al embarazo"
+    },
+    {
+        "code": "228007",
+        "system": "http://snomed.info/sct",
+        "display": "Lucio phenomenon",
+        "spanish_display": "Fenómeno de Lucio"
+    },
+    {
+        "code": "241006",
+        "system": "http://snomed.info/sct",
+        "display": "Epilepsia partialis continua",
+        "spanish_display": "Epilepsia parcial continua"
+    },
+    {
+        "code": "242004",
+        "system": "http://snomed.info/sct",
+        "display": "Noninfectious jejunitis",
+        "spanish_display": "Yeyunitis no infecciosa"
+    },
+    {
+        "code": "253005",
+        "system": "http://snomed.info/sct",
+        "display": "Sycosis",
+        "spanish_display": "Sicosis"
+    },
+    {
+        "code": "257006",
+        "system": "http://snomed.info/sct",
+        "display": "Acne rosacea, erythematous telangiectatic type",
+        "spanish_display": "Acné rosácea, tipo eritematoso telangiectásico"
+    },
+    {
+        "code": "264008",
+        "system": "http://snomed.info/sct",
+        "display": "Blind hypertensive eye",
+        "spanish_display": "Ojo hipertenso ciego"
+    },
+    {
+        "code": "276008",
+        "system": "http://snomed.info/sct",
+        "display": "Poisoning by oxytocin",
+        "spanish_display": "Envenenamiento por oxitocina"
+    },
+    {
+        "code": "279001",
+        "system": "http://snomed.info/sct",
+        "display": "Senile myocarditis",
+        "spanish_display": "Miocarditis senil"
+    },
+    {
+        "code": "281004",
+        "system": "http://snomed.info/sct",
+        "display": "Dementia associated with alcoholism",
+        "spanish_display": "Demencia asociada con alcoholismo"
+    },
+    {
+        "code": "290006",
+        "system": "http://snomed.info/sct",
+        "display": "Melnick-Fraser syndrome",
+        "spanish_display": "Síndrome de Melnick-Fraser"
+    },
+    {
+        "code": "292003",
+        "system": "http://snomed.info/sct",
+        "display": "EEG finding",
+        "spanish_display": "Hallazgo de EEG"
+    },
+    {
+        "code": "297009",
+        "system": "http://snomed.info/sct",
+        "display": "Acute myringitis",
+        "spanish_display": "Miringitis aguda"
+    },
+    {
+        "code": "299007",
+        "system": "http://snomed.info/sct",
+        "display": "Paraffinoma of skin",
+        "spanish_display": "Parafinoma de la piel"
+    },
+    {
+        "code": "303002",
+        "system": "http://snomed.info/sct",
+        "display": "Apoplectic pancreatitis",
+        "spanish_display": "Pancreatitis apoplética"
+    },
+    {
+        "code": "308006",
+        "system": "http://snomed.info/sct",
+        "display": "Pearly penile papules",
+        "spanish_display": "Pápulas perladas del pene"
+    },
+    {
+        "code": "310008",
+        "system": "http://snomed.info/sct",
+        "display": "Boil of penis",
+        "spanish_display": "Forúnculo del pene"
+    },
+    {
+        "code": "313005",
+        "system": "http://snomed.info/sct",
+        "display": "Déjà vu",
+        "spanish_display": "Déjà vu"
+    },
+    {
+        "code": "317006",
+        "system": "http://snomed.info/sct",
+        "display": "Reactive hypoglycemia",
+        "spanish_display": "Hipoglucemia reactiva"
+    },
+    {
+        "code": "320003",
+        "system": "http://snomed.info/sct",
+        "display": "Cervical dilatation, 1cm",
+        "spanish_display": "Dilatación cervical, 1cm"
+    },
+    {
+        "code": "324007",
+        "system": "http://snomed.info/sct",
+        "display": "Plaster ulcer",
+        "spanish_display": "Úlcera por yeso"
+    },
+    {
+        "code": "330007",
+        "system": "http://snomed.info/sct",
+        "display": "Occipital headache",
+        "spanish_display": "Cefalea occipital"
+    },
+    {
+        "code": "335002",
+        "system": "http://snomed.info/sct",
+        "display": "Pylorospasm",
+        "spanish_display": "Espasmo pilórico"
+    },
+    {
+        "code": "341009",
+        "system": "http://snomed.info/sct",
+        "display": "ABO incompatibility reaction",
+        "spanish_display": "Reacción de incompatibilidad ABO"
+    },
+    {
+        "code": "349006",
+        "system": "http://snomed.info/sct",
+        "display": "Absent tendon reflex",
+        "spanish_display": "Ausencia de reflejo tendinoso"
+    },
+    {
+        "code": "355001",
+        "system": "http://snomed.info/sct",
+        "display": "Hemorrhagic shock",
+        "spanish_display": "Shock hemorrágico"
+    },
+    {
+        "code": "357009",
+        "system": "http://snomed.info/sct",
+        "display": "Closed fracture of trapezoidal bone of wrist",
+        "spanish_display": "Fractura cerrada del hueso trapezoidal de la muñeca"
+    },
+    {
+        "code": "359007",
+        "system": "http://snomed.info/sct",
+        "display": "Kernicterus due to isoimmunization",
+        "spanish_display": "Kernicterus por isoinmunización"
+    },
+    {
+        "code": "360002",
+        "system": "http://snomed.info/sct",
+        "display": "Acute radiation disease",
+        "spanish_display": "Enfermedad aguda por radiación"
+    },
+    {
+        "code": "364006",
+        "system": "http://snomed.info/sct",
+        "display": "Acute left-sided heart failure",
+        "spanish_display": "Insuficiencia cardíaca aguda del lado izquierdo"
+    },
+    {
+        "code": "366008",
+        "system": "http://snomed.info/sct",
+        "display": "Hidromeiosis",
+        "spanish_display": "Hidromeiosis"
+    },
+    {
+        "code": "368009",
+        "system": "http://snomed.info/sct",
+        "display": "Heart valve disorder",
+        "spanish_display": "Trastorno de válvula cardíaca"
+    },
+    {
+        "code": "369001",
+        "system": "http://snomed.info/sct",
+        "display": "Normal jugular venous pressure",
+        "spanish_display": "Presión venosa yugular normal"
+    },
+    {
+        "code": "378007",
+        "system": "http://snomed.info/sct",
+        "display": "Morquio syndrome",
+        "spanish_display": "Síndrome de Morquio"
+    },
+    {
+        "code": "382009",
+        "system": "http://snomed.info/sct",
+        "display": "Legal history finding relating to child",
+        "spanish_display": "Hallazgo de historia legal relacionada con niño"
+    },
+    {
+        "code": "383004",
+        "system": "http://snomed.info/sct",
+        "display": "Passive range of hip extension - finding",
+        "spanish_display": "Hallazgo del rango pasivo de extensión de cadera"
+    },
+    {
+        "code": "385006",
+        "system": "http://snomed.info/sct",
+        "display": "Secondary peripheral neuropathy",
+        "spanish_display": "Neuropatía periférica secundaria"
+    },
+    {
+        "code": "387003",
+        "system": "http://snomed.info/sct",
+        "display": "Melanuria",
+        "spanish_display": "Melanuria"
+    },
+    {
+        "code": "398002",
+        "system": "http://snomed.info/sct",
+        "display": "Left axis deviation greater than -90 degrees by EKG",
+        "spanish_display": "Desviación del eje izquierdo mayor a -90 grados por ECG"
+    },
+    {
+        "code": "407000",
+        "system": "http://snomed.info/sct",
+        "display": "Congenital hepatomegaly",
+        "spanish_display": "Hepatomegalia congénita"
+    },
+    {
+        "code": "408005",
+        "system": "http://snomed.info/sct",
+        "display": "Tooth chattering",
+        "spanish_display": "Castañeteo de dientes"
+    },
+    {
+        "code": "409002",
+        "system": "http://snomed.info/sct",
+        "display": "Food allergy diet",
+        "spanish_display": "Dieta para alergia alimentaria"
+    },
+    {
+        "code": "426008",
+        "system": "http://snomed.info/sct",
+        "display": "Superficial injury of ankle without infection",
+        "spanish_display": "Lesión superficial de tobillo sin infección"
+    },
+    {
+        "code": "431005",
+        "system": "http://snomed.info/sct",
+        "display": "Hypertrophy of scrotum",
+        "spanish_display": "Hipertrofia del escroto"
+    },
+    {
+        "code": "437009",
+        "system": "http://snomed.info/sct",
+        "display": "Abnormal composition of urine",
+        "spanish_display": "Composición anormal de la orina"
+    },
+    {
+        "code": "440009",
+        "system": "http://snomed.info/sct",
+        "display": "Persistent hyperphenylalaninemia",
+        "spanish_display": "Hiperfenilalaninemia persistente"
+    },
+    {
+        "code": "442001",
+        "system": "http://snomed.info/sct",
+        "display": "Secondary hypopituitarism",
+        "spanish_display": "Hipopituitarismo secundario"
+    },
+    {
+        "code": "443006",
+        "system": "http://snomed.info/sct",
+        "display": "Cystocele affecting pregnancy",
+        "spanish_display": "Cistocele que afecta al embarazo"
+    },
+    {
+        "code": "447007",
+        "system": "http://snomed.info/sct",
+        "display": "Coach in sports activity accident",
+        "spanish_display": "Entrenador en accidente de actividad deportiva"
+    },
+    {
+        "code": "450005",
+        "system": "http://snomed.info/sct",
+        "display": "Ulcerative stomatitis",
+        "spanish_display": "Estomatitis ulcerativa"
+    },
+    {
+        "code": "452002",
+        "system": "http://snomed.info/sct",
+        "display": "Blister of groin without infection",
+        "spanish_display": "Ampolla en la ingle sin infección"
+    },
+    {
+        "code": "460001",
+        "system": "http://snomed.info/sct",
+        "display": "Squamous metaplasia of prostate gland",
+        "spanish_display": "Metaplasia escamosa de la glándula prostática"
+    },
+    {
+        "code": "467003",
+        "system": "http://snomed.info/sct",
+        "display": "Old laceration of muscles of pelvic floor",
+        "spanish_display": "Laceración antigua de los músculos del piso pélvico"
+    },
+    {
+        "code": "470004",
+        "system": "http://snomed.info/sct",
+        "display": "Vitreous touch syndrome",
+        "spanish_display": "Síndrome de contacto vítreo"
+    },
+    {
+        "code": "479003",
+        "system": "http://snomed.info/sct",
+        "display": "Graves' disease with pretibial myxedema AND with thyrotoxic crisis",
+        "spanish_display": "Enfermedad de Graves con mixedema pretibial Y crisis tirotóxica"
+    },
+    {
+        "code": "486006",
+        "system": "http://snomed.info/sct",
+        "display": "Acute vascular insufficiency",
+        "spanish_display": "Insuficiencia vascular aguda"
+    },
+    {
+        "code": "488007",
+        "system": "http://snomed.info/sct",
+        "display": "Fibroid myocarditis",
+        "spanish_display": "Miocarditis fibroide"
+    },
+    {
+        "code": "490008",
+        "system": "http://snomed.info/sct",
+        "display": "Upper respiratory tract hypersensitivity reaction",
+        "spanish_display": "Reacción de hipersensibilidad del tracto respiratorio superior"
+    },
+    {
+        "code": "496002",
+        "system": "http://snomed.info/sct",
+        "display": "Closed traumatic dislocation of third cervical vertebra (disorder)",
+        "spanish_display": "Dislocación traumática cerrada de la tercera vértebra cervical (trastorno)"
+    },
+    {
+        "code": "504009",
+        "system": "http://snomed.info/sct",
+        "display": "Androgen-dependent hirsutism",
+        "spanish_display": "Hirsutismo andrógeno-dependiente"
+    },
+    {
+        "code": "517007",
+        "system": "http://snomed.info/sct",
+        "display": "Foreign body in hypopharynx",
+        "spanish_display": "Cuerpo extraño en hipofaringe"
+    },
+    {
+        "code": "518002",
+        "system": "http://snomed.info/sct",
+        "display": "Multiple aggregation",
+        "spanish_display": "Agregación múltiple"
+    },
+    {
+        "code": "520004",
+        "system": "http://snomed.info/sct",
+        "display": "Congenital bent nose",
+        "spanish_display": "Nariz torcida congénita"
+    },
+    {
+        "code": "527001",
+        "system": "http://snomed.info/sct",
+        "display": "Spontaneous fetal evolution, Roederer's method",
+        "spanish_display": "Evolución fetal espontánea, método de Roederer"
+    },
+    {
+        "code": "536002",
+        "system": "http://snomed.info/sct",
+        "display": "Glissonian cirrhosis",
+        "spanish_display": "Cirrosis de Glisson"
+    },
+    {
+        "code": "539009",
+        "system": "http://snomed.info/sct",
+        "display": "Conjunctival argyrosis",
+        "spanish_display": "Argirosis conjuntival"
+    },
+    {
+        "code": "547009",
+        "system": "http://snomed.info/sct",
+        "display": "Hypersecretion of calcitonin",
+        "spanish_display": "Hipersecreción de calcitonina"
+    },
+    {
+        "code": "548004",
+        "system": "http://snomed.info/sct",
+        "display": "13p partial trisomy syndrome",
+        "spanish_display": "Síndrome de trisomía parcial 13p"
+    }
+]
