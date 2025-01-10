@@ -12,6 +12,7 @@ from fhir_apis.fhir import (
     aceptar_cita,
     crear_cita,
     get_practitioner,
+    obtener_solicitudes,
     rechazar_cita,
     solicitar_cita,
     get_appointment_by_id,
@@ -72,7 +73,10 @@ def cleanup_old_conversations():
         if number in appointments:
             del appointments[number]
 
-def _generate_appointment_message(appointment_datetime: str, practitioner_name: str) -> str:
+
+def _generate_appointment_message(
+    appointment_datetime: str, practitioner_name: str
+) -> str:
     return f"""Te asignamos la siguiente cita:
 
 🗓 Fecha y hora: *{appointment_datetime}*
@@ -83,6 +87,7 @@ def _generate_appointment_message(appointment_datetime: str, practitioner_name: 
 Por favor confirma tu asistencia respondiendo a este mensaje. 
 
 ¡Nos vemos pronto! 🏥👩‍⚕️"""
+
 
 async def get_ai_response(message: str, conversation_history: List[dict]) -> str:
     try:
@@ -219,7 +224,7 @@ async def create_appointment(body: PostAppointmentRequest):
     print(response.json())
 
     appointment_id = response.json()["id"]
-    
+
     # get patient id from response
     participants = response.json()["participant"]
     for participant in participants:
@@ -238,6 +243,11 @@ async def create_appointment(body: PostAppointmentRequest):
     asyncio.create_task(send_appointment_date(sender, appointment_id))
 
     return response.json()
+
+
+@app.get("/service_requests")
+async def get_service_requests(patient_id: str | None) -> list[dict]:
+    return obtener_solicitudes(patient_id)
 
 
 async def send_appointment_date(sender: str, appointment_id: str):

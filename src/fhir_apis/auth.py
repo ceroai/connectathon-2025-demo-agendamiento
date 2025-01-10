@@ -1,6 +1,4 @@
-
 import requests
-
 
 
 def get_access_token(token_url: str, client_id: str, client_secret: str) -> str:
