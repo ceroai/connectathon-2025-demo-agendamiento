@@ -36,7 +36,7 @@ class CodingItem(BaseModel):
 
 
 class Code(BaseModel):
-    coding: List[CodingItem]
+    coding: List[CodingItem] | None = None
     text: str
 
 

@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     # Application settings
     CONVERSATION_TIMEOUT: int = 30
 
-    WAIT_TIME_FOR_APPOINTMENT_SECONDS: int = 5
+    WAIT_TIME_FOR_APPOINTMENT_SECONDS: int = 1
 
     class Config:
         env_file = ".env"

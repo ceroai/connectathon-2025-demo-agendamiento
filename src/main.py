@@ -13,11 +13,12 @@ from fhir_apis.fhir import (
     crear_cita,
     get_practitioner,
     obtener_solicitudes,
-    obtener_ultima_cita,
     rechazar_cita,
     solicitar_cita,
+    get_appointment_by_id,
 )
 from models.appointment_create_request import PostAppointmentRequest
+from models.single_appointment import SingleAppointment
 from settings import settings
 from utils import (
     find_appointment_id,
@@ -31,7 +32,7 @@ from utils import (
 # Initialize OpenAI client
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # Store conversation history: phone_number -> list of messages
 conversations: Dict[str, List[dict]] = {}
@@ -39,12 +40,14 @@ conversations: Dict[str, List[dict]] = {}
 # Store appointments: phone_number -> appointment
 appointments: Dict[str, dict] = {}
 
+PATIENT_ID = "Patient/781"
+
 system_prompt = f"""
     Eres un asistente del consultorio familiar llamado "El Consultorio", ubicado en Av. Los Montt 2301 en Puerto Montt, región de Los Lagos, cuyas horas de funcionamiento son desde las 8:00 hasta las 17 hrs. Los consultorios también se conocen como CESFAM, o Centro de Salud Familiar. 
     
     Tu labor es ayudar a pacientes a pedir citas con el doctor. Los pacientes no pueden agendar cuando quieran, sino que deben solicitar una cita, y el CESFAM se encarga de asignar una cita a los pacientes. En este contexto, las citas también se les llama "horas", por ejemplo, cuando el paciente dice "quiero agendar una hora", la "hora" es una cita médica.
     
-    Cuando el paciente escriba algo con la intención de agendar una cita, responde con la palabra 'AGENDAR'. No digas nada más. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
+    Cuando el paciente escriba algo con la intención de agendar una cita, junto con sus síntomas, responde con "AGENDAR" más los síntomas que el paciente indique. Si el paciente no indica síntomas, pregúntale por ellos. Sólo cuando el paciente haya indicado los síntomas, debes responder con "AGENDAR" más los síntomas. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
 
     Sólo después de haber dicho 'AGENDAR', el paciente puede aceptar o rechazar la cita. Aceptar la cita significa que el paciente confirma que asistirá a la cita asignada. Rechazar la cita significa que el paciente no puede asistir a la cita asignada. Cuando ocurra la aceptación o rechazo, debes responder "ACEPTADO" o "RECHAZADO" respectivamente, sin decir nada más. Si el paciente rechaza la cita, además puede indicar en su mensaje que le gustaría cambiar la fecha (por ejemplo, "no puedo asistir, es posible ir la próxima semana?"). En ese caso, debes responder "REASIGNAR" seguido de la fecha que eligió, por ejemplo: "REASIGNAR 2025-01-01".
     
@@ -70,15 +73,21 @@ def cleanup_old_conversations():
         if number in appointments:
             del appointments[number]
 
-def _generate_appointment_message(appointment_datetime: str, practitioner_name: str) -> str:
-    return f"""Te asignamos la siguiente cita:\n 
 
-    🗓 Fecha y hora: *{appointment_datetime}*
-    🥼 Profesional:{practitioner_name}
-    🏥 Sucursal: El Centro
-    📍 Ubicación: Dirección 1234, Puerto Montt
+def _generate_appointment_message(
+    appointment_datetime: str, practitioner_name: str
+) -> str:
+    return f"""Te asignamos la siguiente cita:
 
-    Por favor confirma tu asistencia respondiendo a este mensaje. ¡Nos vemos pronto! 🏥👩‍⚕️"""
+🗓 Fecha y hora: *{appointment_datetime}*
+🥼 Profesional: {practitioner_name}
+🏥 Sucursal: El Consultorio
+📍 Ubicación: Av. Los Montt 2301, Puerto Montt
+
+Por favor confirma tu asistencia respondiendo a este mensaje. 
+
+¡Nos vemos pronto! 🏥👩‍⚕️"""
+
 
 async def get_ai_response(message: str, conversation_history: List[dict]) -> str:
     try:
@@ -140,22 +149,35 @@ async def webhook(request: Request):
             conversations[sender] = conversations[sender][-10:]
 
         match ai_response:
-            case "AGENDAR":
-                response = solicitar_cita("Patient/781")
+            # case "AGENDAR":
+            #     resp.message(
+            #         "Por favor, indica los síntomas de la consulta"
+            #     )
+            #     # Store the appointment request
+            #     appointments[sender] = {
+            #         "patient_id": PATIENT_ID,
+            #         "status": "pending",
+            #         "observation": "",
+            #     }
+            case str() if ai_response.startswith("AGENDAR "):
+                observation = ai_response.split(" ", 1)[1]
+                response = solicitar_cita(PATIENT_ID, observation)
                 if response.ok:
                     resp.message(
                         "Estamos pidiendo la cita, te avisaremos cuando esté agendada"
                     )
                     # Store the appointment request
-                    appointments[sender] = {"status": "pending"}
-                    # Schedule the follow-up message
-                    asyncio.create_task(send_appointment_date(sender))
+                    appointments[sender] = {
+                        "patient_id": PATIENT_ID,
+                        "status": "pending",
+                        "observation": observation,
+                    }
                 else:
                     resp.message(
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
                     )
             case "ACEPTADO":
-                cita = obtener_ultima_cita()
+                cita = SingleAppointment(**appointments[sender]["appointment"])
 
                 aceptar_cita(
                     appointment_id=find_appointment_id(cita),
@@ -166,7 +188,7 @@ async def webhook(request: Request):
 
                 resp.message("Gracias por su respuesta, te esperamos!")
             case "RECHAZADO":
-                cita = obtener_ultima_cita()
+                cita = SingleAppointment(**appointments[sender]["appointment"])
                 rechazar_cita(
                     appointment_id=find_appointment_id(cita),
                     patient_id=find_patient_id(cita),
@@ -183,7 +205,7 @@ async def webhook(request: Request):
                     fecha = ai_response.split(" ")[1]
                     # TODO: Implementar lógica para reasignar cita
                     resp.message(
-                        f"Estamos reasignando tu cita para el {fecha}, te confirmaremos cuando esté lista"
+                        f"Veremos si es posible reagendar la cita para una fecha cercana al {fecha}. Te avisaremos por acá la nueva asignación."
                     )
                 except IndexError:
                     resp.message("Por favor indica la fecha en formato YYYY-MM-DD")
@@ -197,8 +219,30 @@ async def webhook(request: Request):
 
 
 @app.post("/appointment")
-async def create_appointment(body: PostAppointmentRequest) -> None:
-    crear_cita(body)
+async def create_appointment(body: PostAppointmentRequest):
+    response = crear_cita(body)
+    print(response.json())
+
+    appointment_id = response.json()["id"]
+
+    # get patient id from response
+    participants = response.json()["participant"]
+    for participant in participants:
+        if participant["actor"]["reference"].startswith("Patient/"):
+            patient_id = participant["actor"]["reference"]
+            break
+
+    for sender, data in appointments.items():
+        if data["patient_id"] == patient_id:
+            # TODO
+            appointments[sender]["appointment"] = response.json()
+            break
+    else:
+        return Response(status_code=404, content="Patient not found")
+
+    asyncio.create_task(send_appointment_date(sender, appointment_id))
+
+    return response.json()
 
 
 @app.get("/service_requests")
@@ -206,20 +250,26 @@ async def get_service_requests(patient_id: str | None) -> list[dict]:
     return obtener_solicitudes(patient_id)
 
 
-async def send_appointment_date(sender: str):
+async def send_appointment_date(sender: str, appointment_id: str):
     await asyncio.sleep(settings.WAIT_TIME_FOR_APPOINTMENT_SECONDS)
 
     try:
-        # Get the appointment date
-        cita = obtener_ultima_cita()
+        # Get the appointment
+        cita = get_appointment_by_id(appointment_id)
+        # service_request_id = appointments[sender]["appointment"]["basedOn"][0]["reference"].split("/")[1]
+        # cita = obtener_cita_por_service_request_id(service_request_id)
+
+        patient_id = find_patient_id(cita)
         practitioner_id = find_practitioner_id(cita)
         practitioner = get_practitioner(practitioner_id)
-        fecha_cita = formatear_fecha_legible(cita.entry[0].resource.start)
+        fecha_cita = formatear_fecha_legible(cita.start)
         nombre_practitioner = get_practitioner_name(practitioner)
+
         # Store the confirmed appointment
         appointments[sender] = {
+            "patient_id": patient_id,
             "status": "confirmed",
-            "appointment": cita.entry[0].resource,
+            "appointment": cita.model_dump(),
             "formatted_date": fecha_cita,
             "practitioner_name": nombre_practitioner,
         }
