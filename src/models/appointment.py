@@ -1,3 +1,5 @@
+"""Modelo que representa el resultado del get Appointments."""
+
 from __future__ import annotations
 
 from typing import List
