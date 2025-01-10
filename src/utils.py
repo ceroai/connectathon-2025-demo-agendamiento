@@ -57,8 +57,9 @@ def find_service_request_id(appointment: Appointment) -> str:
 
 def find_patient_id(appointment: Appointment) -> str:
     for entry in appointment.entry:
-        if entry.resource.actor.reference.startswith("Patient/"):
-            return entry.resource.actor.reference.split("/")[1]
+        for participant in entry.resource.participant:
+            if participant.actor.reference.startswith("Patient/"):
+                return participant.actor.reference.split("/")[1]
     return None
 
 
