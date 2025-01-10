@@ -1,28 +1,31 @@
-from fastapi import FastAPI, Request, Response
-from twilio.twiml.messaging_response import MessagingResponse
-from openai import OpenAI
-import uvicorn
+import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, List
+
+import requests
+import uvicorn
+from fastapi import FastAPI, Request, Response
+from openai import OpenAI
+from twilio.twiml.messaging_response import MessagingResponse
+
 from fhir_apis.fhir import (
-    solicitar_cita,
-    obtener_ultima_cita,
-    get_practitioner,
     aceptar_cita,
+    crear_cita,
+    get_practitioner,
+    obtener_ultima_cita,
     rechazar_cita,
+    solicitar_cita,
 )
+from models.appointment_create_request import PostAppointmentRequest
+from settings import settings
 from utils import (
-    formatear_fecha_legible,
-    get_practitioner_name,
+    find_appointment_id,
+    find_patient_id,
     find_practitioner_id,
     find_service_request_id,
-    find_patient_id,
-    find_appointment_id,
+    formatear_fecha_legible,
+    get_practitioner_name,
 )
-import requests
-import asyncio
-from settings import settings
-
 
 # Initialize OpenAI client
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -181,6 +184,11 @@ async def webhook(request: Request):
 
     # Return the TwiML response
     return Response(content=str(resp), media_type="application/xml")
+
+
+@app.post("/appointment")
+async def create_appointment(body: PostAppointmentRequest):
+    crear_cita(body)
 
 
 async def send_appointment_date(sender: str):
