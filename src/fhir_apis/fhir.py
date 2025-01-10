@@ -3,6 +3,7 @@ import uuid
 import requests
 import datetime
 from models.appointment import Appointment
+from models.single_appointment import SingleAppointment
 from models.appointment_create_request import PostAppointmentRequest
 from models.practitioner import Practitioner
 from settings import settings
@@ -344,3 +345,14 @@ def get_practitioner(practitioner_id: str) -> Practitioner:
         headers={"Authorization": f"Bearer {access_token}"},
     )
     return Practitioner(**response.json())
+
+
+def get_appointment_by_id(appointment_id: str) -> SingleAppointment:
+    access_token = get_access_token(
+        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
+    )
+    response = requests.get(
+        f"{settings.FHIR_API_URL}/Appointment/{appointment_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    return SingleAppointment(**response.json())

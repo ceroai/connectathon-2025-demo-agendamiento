@@ -15,10 +15,10 @@ from fhir_apis.fhir import (
     obtener_ultima_cita,
     rechazar_cita,
     solicitar_cita,
-    obtener_cita_por_service_request_id,
+    get_appointment_by_id,
 )
 from models.appointment_create_request import PostAppointmentRequest
-from models.appointment import Appointment
+from models.single_appointment import SingleAppointment
 from settings import settings
 from utils import (
     find_appointment_id,
@@ -32,7 +32,7 @@ from utils import (
 # Initialize OpenAI client
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # Store conversation history: phone_number -> list of messages
 conversations: Dict[str, List[dict]] = {}
@@ -161,7 +161,7 @@ async def webhook(request: Request):
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
                     )
             case "ACEPTADO":
-                cita = obtener_ultima_cita()
+                cita = SingleAppointment(**appointments[sender]["appointment"])
 
                 aceptar_cita(
                     appointment_id=find_appointment_id(cita),
@@ -172,7 +172,7 @@ async def webhook(request: Request):
 
                 resp.message("Gracias por su respuesta, te esperamos!")
             case "RECHAZADO":
-                cita = obtener_ultima_cita()
+                cita = SingleAppointment(**appointments[sender]["appointment"])
                 rechazar_cita(
                     appointment_id=find_appointment_id(cita),
                     patient_id=find_patient_id(cita),
@@ -189,7 +189,7 @@ async def webhook(request: Request):
                     fecha = ai_response.split(" ")[1]
                     # TODO: Implementar lógica para reasignar cita
                     resp.message(
-                        f"Estamos reasignando tu cita para el {fecha}, te confirmaremos cuando esté lista"
+                        f"Veremos si es posible reagendar la cita para una fecha cercana al {fecha}. Te avisaremos por acá la nueva asignación."
                     )
                 except IndexError:
                     resp.message("Por favor indica la fecha en formato YYYY-MM-DD")
@@ -205,39 +205,50 @@ async def webhook(request: Request):
 @app.post("/appointment")
 async def create_appointment(body: PostAppointmentRequest):
     response = crear_cita(body)
-    patient_id = find_patient_id(Appointment(response.json()))
+    print(response.json())
+
+    appointment_id = response.json()["id"]
+    
+    # get patient id from response
+    participants = response.json()["participant"]
+    for participant in participants:
+        if participant["actor"]["reference"].startswith("Patient/"):
+            patient_id = participant["actor"]["reference"]
+            break
 
     for sender, data in appointments.items():
         if data["patient_id"] == patient_id:
             # TODO
             appointments[sender]["appointment"] = response.json()
-            appointments[sender]["status"] = "confirmed"
             break
     else:
         return Response(status_code=404, content="Patient not found")
-    asyncio.create_task(send_appointment_date(sender))
+
+    asyncio.create_task(send_appointment_date(sender, appointment_id))
 
     return response.json()
 
 
-async def send_appointment_date(sender: str):
+async def send_appointment_date(sender: str, appointment_id: str):
     await asyncio.sleep(settings.WAIT_TIME_FOR_APPOINTMENT_SECONDS)
 
     try:
         # Get the appointment
-        service_request_id = appointments[sender]["appointment"]["basedOn"][0]["reference"].split("/")[1]
-        cita = obtener_cita_por_service_request_id(service_request_id)
+        cita = get_appointment_by_id(appointment_id)
+        # service_request_id = appointments[sender]["appointment"]["basedOn"][0]["reference"].split("/")[1]
+        # cita = obtener_cita_por_service_request_id(service_request_id)
 
         patient_id = find_patient_id(cita)
         practitioner_id = find_practitioner_id(cita)
         practitioner = get_practitioner(practitioner_id)
-        fecha_cita = formatear_fecha_legible(cita.entry[0].resource.start)
+        fecha_cita = formatear_fecha_legible(cita.start)
         nombre_practitioner = get_practitioner_name(practitioner)
+
         # Store the confirmed appointment
         appointments[sender] = {
             "patient_id": patient_id,
             "status": "confirmed",
-            "appointment": cita.entry[0].resource,
+            "appointment": cita.model_dump(),
             "formatted_date": fecha_cita,
             "practitioner_name": nombre_practitioner,
         }
