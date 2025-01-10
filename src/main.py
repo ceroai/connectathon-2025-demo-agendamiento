@@ -1,21 +1,31 @@
-from fastapi import Body, FastAPI, Request, Response
-from twilio.twiml.messaging_response import MessagingResponse
-from openai import OpenAI
-import uvicorn
+import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, List
+
+import requests
+import uvicorn
+from fastapi import FastAPI, Request, Response
+from openai import OpenAI
+from twilio.twiml.messaging_response import MessagingResponse
+
 from fhir_apis.fhir import (
+    aceptar_cita,
     crear_cita,
-    solicitar_cita,
-    obtener_ultima_cita,
     get_practitioner,
+    obtener_ultima_cita,
+    rechazar_cita,
+    solicitar_cita,
 )
 from models.appointment_create_request import PostAppointmentRequest
-from utils import formatear_fecha_legible, get_practitioner_name, find_practitioner_id
-import requests
-import asyncio
 from settings import settings
-
+from utils import (
+    find_appointment_id,
+    find_patient_id,
+    find_practitioner_id,
+    find_service_request_id,
+    formatear_fecha_legible,
+    get_practitioner_name,
+)
 
 # Initialize OpenAI client
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -29,10 +39,14 @@ conversations: Dict[str, List[dict]] = {}
 appointments: Dict[str, dict] = {}
 
 system_prompt = f"""
-    Eres un asistente de WhatsApp que ayuda a pacientes a agendar citas con el doctor. Cuando el paciente escriba algo con la intención de agendar una cita, responde con la palabra 'AGENDAR'. No digas nada más. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
+    Eres un asistente del consultorio familiar llamado "El Consultorio", ubicado en Av. Los Montt 2301 en Puerto Montt, región de Los Lagos, cuyas horas de funcionamiento son desde las 8:00 hasta las 17 hrs. Los consultorios también se conocen como CESFAM, o Centro de Salud Familiar. 
+    
+    Tu labor es ayudar a pacientes a pedir citas con el doctor. Los pacientes no pueden agendar cuando quieran, sino que deben solicitar una cita, y el CESFAM se encarga de asignar una cita a los pacientes. En este contexto, las citas también se les llama "horas", por ejemplo, cuando el paciente dice "quiero agendar una hora", la "hora" es una cita médica.
+    
+    Cuando el paciente escriba algo con la intención de agendar una cita, responde con la palabra 'AGENDAR'. No digas nada más. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
 
-    Sólo después de haber dicho 'AGENDAR', si el paciente dice que no puede asistir a la cita agendada (por ejemplo, puede decir cosas como "no puedo ir", o "rechazo la cita" o "se puede en otra hora"), entonces debes responder "REASIGNAR". Si no has dicho 'AGENDAR', no puedes responder "REASIGNAR". Si el paciente además dice sus preferencias de fecha, entonces debes responder "REASIGNAR" seguido de la fecha que eligió, por ejemplo: "REASIGNAR 2025-01-01".
-
+    Sólo después de haber dicho 'AGENDAR', el paciente puede aceptar o rechazar la cita. Aceptar la cita significa que el paciente confirma que asistirá a la cita asignada. Rechazar la cita significa que el paciente no puede asistir a la cita asignada. Cuando ocurra la aceptación o rechazo, debes responder "ACEPTADO" o "RECHAZADO" respectivamente, sin decir nada más. Si el paciente rechaza la cita, además puede indicar en su mensaje que le gustaría cambiar la fecha (por ejemplo, "no puedo asistir, es posible ir la próxima semana?"). En ese caso, debes responder "REASIGNAR" seguido de la fecha que eligió, por ejemplo: "REASIGNAR 2025-01-01".
+    
     La fecha y hora actual es {datetime.now().isoformat()}.
 """
 
@@ -139,6 +153,28 @@ async def webhook(request: Request):
                     resp.message(
                         "Hubo un error al agendar la cita, envía un correo a ministra@minsal.cl"
                     )
+            case "ACEPTADO":
+                cita = obtener_ultima_cita()
+
+                aceptar_cita(
+                    appointment_id=find_appointment_id(cita),
+                    patient_id=find_patient_id(cita),
+                    service_request_id=find_service_request_id(cita),
+                    practitioner_id=find_practitioner_id(cita),
+                )
+
+                resp.message("Gracias por su respuesta, te esperamos!")
+            case "RECHAZADO":
+                cita = obtener_ultima_cita()
+                rechazar_cita(
+                    appointment_id=find_appointment_id(cita),
+                    patient_id=find_patient_id(cita),
+                    service_request_id=find_service_request_id(cita),
+                    practitioner_id=find_practitioner_id(cita),
+                )
+
+                resp.message("Rechazaste la cita.")
+
             case "REASIGNAR":
                 resp.message(ai_response)
             case str() if ai_response.startswith("REASIGNAR "):

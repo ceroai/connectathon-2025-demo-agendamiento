@@ -20,8 +20,8 @@ Este proyecto implementa un servicio de gestión de citas médicas que se integr
 
 ```bash
 uv venv
+uv sync
 source .venv/bin/activate
-uv pip install .
 ```
 
 3. Configura las variables de entorno:

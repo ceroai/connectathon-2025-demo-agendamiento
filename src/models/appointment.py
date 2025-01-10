@@ -85,6 +85,6 @@ class Appointment(BaseModel):
     id: str
     meta: Meta
     type: str
-    total: int
+    total: int | None = None
     link: List[LinkItem]
     entry: List[EntryItem]
