@@ -3,6 +3,8 @@
 
 Este servicio proporciona una API para la gestión de citas médicas utilizando el estándar FHIR (Fast Healthcare Interoperability Resources).
 
+![Demo Connectathon](demo-connectathon-2.mp4)
+
 ## Descripción
 
 Este proyecto implementa un servicio de gestión de citas médicas que se integra con sistemas FHIR. Permite la creación, consulta y gestión de citas médicas siguiendo los estándares de interoperabilidad en salud.
