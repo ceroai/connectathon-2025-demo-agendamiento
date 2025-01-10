@@ -27,6 +27,7 @@ from utils import (
     find_service_request_id,
     formatear_fecha_legible,
     get_practitioner_name,
+    find_service_request_id_from_response,
 )
 
 # Initialize OpenAI client
@@ -47,7 +48,7 @@ system_prompt = f"""
     
     Tu labor es ayudar a pacientes a pedir citas con el doctor. Los pacientes no pueden agendar cuando quieran, sino que deben solicitar una cita, y el CESFAM se encarga de asignar una cita a los pacientes. En este contexto, las citas también se les llama "horas", por ejemplo, cuando el paciente dice "quiero agendar una hora", la "hora" es una cita médica.
     
-    Cuando el paciente escriba algo con la intención de agendar una cita, junto con sus síntomas, responde con "AGENDAR" más los síntomas que el paciente indique. Si el paciente no indica síntomas, pregúntale por ellos. Sólo cuando el paciente haya indicado los síntomas, debes responder con "AGENDAR" más los síntomas. Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
+    Cuando el paciente escriba algo con la intención de agendar una cita, junto con sus síntomas, responde con "AGENDAR" más los síntomas que el paciente indique. Si el paciente no indica síntomas, pregúntale por ellos. Sólo cuando el paciente haya indicado los síntomas, debes responder con "AGENDAR " más los síntomas. Nota que es "AGENDAR" con un espacio, y luego el texto con los síntomas, sin decir nada más (por ejemplo, no digas "AGENDAR síntomas: dolor estomacal", sino que "AGENDAR dolor estomacal"). Si no hay intención de agendar, intenta ayudar al paciente con su consulta.
 
     Sólo después de haber dicho 'AGENDAR', el paciente puede aceptar o rechazar la cita. Aceptar la cita significa que el paciente confirma que asistirá a la cita asignada. Rechazar la cita significa que el paciente no puede asistir a la cita asignada. Cuando ocurra la aceptación o rechazo, debes responder "ACEPTADO" o "RECHAZADO" respectivamente, sin decir nada más. Si el paciente rechaza la cita, además puede indicar en su mensaje que le gustaría cambiar la fecha (por ejemplo, "no puedo asistir, es posible ir la próxima semana?"). En ese caso, debes responder "REASIGNAR" seguido de la fecha que eligió, por ejemplo: "REASIGNAR 2025-01-01".
     
@@ -75,7 +76,7 @@ def cleanup_old_conversations():
 
 
 def _generate_appointment_message(
-    appointment_datetime: str, practitioner_name: str
+    appointment_datetime: str, practitioner_name: str, observation: str
 ) -> str:
     return f"""Te asignamos la siguiente cita:
 
@@ -83,6 +84,7 @@ def _generate_appointment_message(
 🥼 Profesional: {practitioner_name}
 🏥 Sucursal: El Consultorio
 📍 Ubicación: Av. Los Montt 2301, Puerto Montt
+🤒 Síntomas reportados: {observation}
 
 Por favor confirma tu asistencia respondiendo a este mensaje. 
 
@@ -162,9 +164,10 @@ async def webhook(request: Request):
             case str() if ai_response.startswith("AGENDAR "):
                 observation = ai_response.split(" ", 1)[1]
                 response = solicitar_cita(PATIENT_ID, observation)
+                service_request_id = find_service_request_id_from_response(response.json())
                 if response.ok:
                     resp.message(
-                        "Estamos pidiendo la cita, te avisaremos cuando esté agendada"
+                        f"Estamos pidiendo la cita, te avisaremos cuando esté agendada. El código de solicitud es {service_request_id}"
                     )
                     # Store the appointment request
                     appointments[sender] = {
@@ -240,7 +243,7 @@ async def create_appointment(body: PostAppointmentRequest):
     else:
         return Response(status_code=404, content="Patient not found")
 
-    asyncio.create_task(send_appointment_date(sender, appointment_id))
+    asyncio.create_task(send_appointment_date(sender, appointment_id, appointments[sender]["observation"]))
 
     return response.json()
 
@@ -250,7 +253,7 @@ async def get_service_requests(patient_id: str | None) -> list[dict]:
     return obtener_solicitudes(patient_id)
 
 
-async def send_appointment_date(sender: str, appointment_id: str):
+async def send_appointment_date(sender: str, appointment_id: str, observation: str):
     await asyncio.sleep(settings.WAIT_TIME_FOR_APPOINTMENT_SECONDS)
 
     try:
@@ -283,7 +286,7 @@ async def send_appointment_date(sender: str, appointment_id: str):
         data = {
             "To": sender,
             "From": from_number,
-            "Body": _generate_appointment_message(fecha_cita, nombre_practitioner),
+            "Body": _generate_appointment_message(fecha_cita, nombre_practitioner, observation),
         }
 
         auth = (account_sid, auth_token)

@@ -59,3 +59,13 @@ def find_patient_id(appointment: SingleAppointment) -> str:
 
 def get_practitioner_name(practitioner: Practitioner) -> str:
     return f"{practitioner.name[0].given[0]} {practitioner.name[0].family}"
+
+
+def find_service_request_id_from_response(response: dict) -> str | None:
+    for entry in response["entry"]:
+        if entry["response"]["status"] == "201 Created":
+            pieces = entry["response"]["location"].split("/")
+            if pieces[0] == "ServiceRequest":
+                return pieces[1]
+
+    return None
