@@ -55,6 +55,15 @@ def cleanup_old_conversations():
         if number in appointments:
             del appointments[number]
 
+def _generate_appointment_message(appointment_datetime: str, practitioner_name: str) -> str:
+    return f"""Te asignamos la siguiente cita:\n 
+
+    🗓 Fecha y hora: *{appointment_datetime}*
+    🥼 Profesional:{practitioner_name}
+    🏥 Sucursal: El Centro
+    📍 Ubicación: Dirección 1234, Puerto Montt
+
+    Por favor confirma tu asistencia respondiendo a este mensaje. ¡Nos vemos pronto! 🏥👩‍⚕️"""
 
 async def get_ai_response(message: str, conversation_history: List[dict]) -> str:
     try:
@@ -182,7 +191,7 @@ async def send_appointment_date(sender: str):
         data = {
             "To": sender,
             "From": from_number,
-            "Body": f"Tu cita ha sido agendada con {nombre_practitioner} para: {fecha_cita}\n\nTe esperamos!",
+            "Body": _generate_appointment_message(fecha_cita, nombre_practitioner),
         }
 
         auth = (account_sid, auth_token)
