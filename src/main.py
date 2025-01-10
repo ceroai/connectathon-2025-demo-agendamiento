@@ -1,10 +1,16 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import Body, FastAPI, Request, Response
 from twilio.twiml.messaging_response import MessagingResponse
 from openai import OpenAI
 import uvicorn
 from datetime import datetime, timedelta
 from typing import Dict, List
-from fhir_apis.fhir import solicitar_cita, obtener_ultima_cita, get_practitioner
+from fhir_apis.fhir import (
+    crear_cita,
+    solicitar_cita,
+    obtener_ultima_cita,
+    get_practitioner,
+)
+from models.appointment_create_request import PostAppointmentRequest
 from utils import formatear_fecha_legible, get_practitioner_name, find_practitioner_id
 import requests
 import asyncio
@@ -142,6 +148,11 @@ async def webhook(request: Request):
 
     # Return the TwiML response
     return Response(content=str(resp), media_type="application/xml")
+
+
+@app.post("/appointment")
+async def create_appointment(body: PostAppointmentRequest):
+    crear_cita(body)
 
 
 async def send_appointment_date(sender: str):
