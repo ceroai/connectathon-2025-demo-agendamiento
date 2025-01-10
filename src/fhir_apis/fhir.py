@@ -1,10 +1,8 @@
 import json
-
+import uuid
 import requests
-
-from models.accept_reject_appointment import AcceptAppointment
 from models.appointment import Appointment
-from models.practitioner import Practitioner
+from models.appointment_create_request import PostAppointmentRequest
 from settings import settings
 
 
@@ -89,23 +87,30 @@ def obtener_ultima_cita(patient_rut: str = "99.999.999-9") -> Appointment:
     return Appointment(**response.json())
 
 
-def get_practitioner(practitioner_id: str) -> Practitioner:
-    access_token = get_access_token(
-        settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
-    )
-    response = requests.get(
-        f"{settings.FHIR_API_URL}/Practitioner/{practitioner_id}",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    return Practitioner(**response.json())
+with open("fhir_apis/body_crear_cita.json", "r") as file:
+    body_crear_cita = json.load(file)
 
 
-def accept_or_reject_appointment(accept_appointment_body: AcceptAppointment) -> requests.Response:
+def get_crear_cita_body(body_crear_cita: dict, request: PostAppointmentRequest) -> dict:
+    id = str(uuid.uuid4())
+    body_crear_cita["id"] = id
+    body_crear_cita["status"] = request.status
+    body_crear_cita["specialty"][0]["coding"] = [
+        item.model_dump() for item in request.specialty
+    ]
+    body_crear_cita["start"] = request.start.isoformat()
+    body_crear_cita["end"] = request.end.isoformat()
+    body_crear_cita["basedOn"] = [{"reference": request.service_request_id}]
+    body_crear_cita["participant"][0]["actor"]["reference"] = request.patient_id
+    body_crear_cita["participant"][1]["actor"]["reference"] = request.practitioner_id
+
+
+def crear_cita(request: PostAppointmentRequest):
     access_token = get_access_token(
         settings.FHIR_AUTH_URL, settings.CLIENT_ID, settings.CLIENT_SECRET
     )
     return requests.post(
-        f"{settings.FHIR_API_URL}/",
+        f"{settings.FHIR_API_URL}Appointment",
         headers={"Authorization": f"Bearer {access_token}"},
-        json=accept_appointment_body.model_dump(),
+        json=get_crear_cita_body(body_crear_cita, request),
     )
